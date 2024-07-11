@@ -19,7 +19,7 @@ if not log_Path.exists():
     log_Path.mkdir(parents=True)
     print(f"Logging directory created at {log_Path.absolute()}")
 
-logfile = log_Path / f"{datetime.today().strftime('%S-%M-%H-%d-%m-%Y')}.log"
+logfile = log_Path / f"{datetime.today().strftime('%M-%S-%H-%d-%m-%Y')}.log"
 
 logger = logging.getLogger(__name__)
 
