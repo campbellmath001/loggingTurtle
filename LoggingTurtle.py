@@ -53,14 +53,27 @@ db_File: Path = entityHome / "DataBase" / f"{entityName}.db"
 # ----create connection to database
 try:
     db = sqlite3.connect(db_File)
+    logger.debug(f'Database connected at {db_File.absolute()}')
 except Exception as e:
     logger.error(f'an error occured when connecting to database: {e}')
 
-# yesterday sorted by day/month/year for sorting most recent
+# Define yesterday string for file naming
+# day,month,year used to place most recent log at top
 yesterday = (datetime.today() - timedelta(days=1)).strftime('%d-%m-%Y')
+
+#pull the data into a dataframe
+
+#clean up the data
+
+#write the data to the database
 
 # where to write csv file and format of filename
 csv_File = csv_Path / f"{yesterday}_{entityName}.csv"
+#write the csv file
 
 # where to write html file and format of filename
 html_File = html_Path / f"{yesterday}_{entityName}.html"
+
+#write the html fle
+
+
