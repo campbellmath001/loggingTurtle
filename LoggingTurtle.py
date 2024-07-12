@@ -10,14 +10,25 @@ entityName = "FFPD"
 current_dir = Path.cwd()
 home_dir = Path.home()
 
-entityHome = current_dir / f"{entityName}"
-log_Path = entityHome / "Debug_Logs"
+def verify_Path(test_Path):
+    if not test_Path.exists():
+        # create the directory
+        test_Path.mkdir(parents=True)
+        print(f"Logging directory created at {test_Path.absolute()}")
 
-# check if log directory exists
-if not log_Path.exists():
-    # create the directory
-    log_Path.mkdir(parents=True)
-    print(f"Logging directory created at {log_Path.absolute()}")
+
+path_List = [
+    entityHome := (current_dir / f"{entityName}"),
+    log_Path := (entityHome / "Debug_Logs"),
+    db_Path := (entityHome / "DataBase"),
+    csv_Path := (entityHome / "csv"),
+    html_Path := (home_dir / "public_html" / entityName)
+]
+
+# verify file system
+for p in path_List:
+    verify_Path(p)
+
 
 logfile = log_Path / f"{datetime.today().strftime('%M-%S-%H-%d-%m-%Y')}.log"
 
@@ -27,28 +38,12 @@ logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
 logger.debug(f'Logging initiated in file {logfile}')
 
-db_Path = entityHome / "DataBase"
+
 
 db_File: Path = entityHome / "DataBase" / f"{entityName}.db"
 
 # create connection to database
 sqlite3.connect(db_File)
-
-# Check if the subdirectory exists
-csv_Path = entityHome / "csv"
-if not csv_Path.exists():
-    # Create the subdirectory if it doesn't exist
-    csv_Path.mkdir(parents=True)
-    print(f"Subdirectory '{csv_Path}' created successfully at {csv_Path.absolute()}")
-else:
-    logger.debug(f'csv path at {csv_Path.absolute()} verified')
-html_Path = home_dir / "public_html" / entityName
-
-if not html_Path.exists():
-    html_Path.mkdir(parents=True)
-    print(f"Subdirectory '{html_Path}' created successfully at {html_Path.absolute()}")
-else:
-    logger.debug(f'html path at {html_Path.absolute()} verified')
 
 # yesterday sorted by day/month/year for sorting most recent
 yesterday = (datetime.today() - timedelta(days=1)).strftime('%d-%m-%Y')
