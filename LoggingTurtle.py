@@ -1,16 +1,17 @@
 from datetime import datetime, timedelta
 import logging
 from pathlib import Path
+import sqlite3
 
-# this will be the folder name where the csv files are stored
-# html files stored at '~/public_html/entityName/
+# entityName is used to name the directories and database where the logged information is stored
 entityName = "FFPD"
 
 # Get the current working directory
 current_dir = Path.cwd()
 home_dir = Path.home()
 
-log_Path = current_dir / "TurtleLogs" / entityName
+entityHome = current_dir / f"{entityName}"
+log_Path = entityHome / "Debug_Logs"
 
 # check if log directory exists
 if not log_Path.exists():
@@ -26,8 +27,15 @@ logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
 logger.debug(f'Logging initiated in file {logfile}')
 
+db_Path = entityHome / "DataBase"
+
+db_File: Path = entityHome / "DataBase" / f"{entityName}.db"
+
+# create connection to database
+sqlite3.connect(db_File)
+
 # Check if the subdirectory exists
-csv_Path = current_dir / entityName
+csv_Path = entityHome / "csv"
 if not csv_Path.exists():
     # Create the subdirectory if it doesn't exist
     csv_Path.mkdir(parents=True)
