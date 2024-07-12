@@ -11,10 +11,15 @@ current_dir = Path.cwd()
 home_dir = Path.home()
 
 def verify_Path(test_Path):
+    
     if not test_Path.exists():
         # create the directory
-        test_Path.mkdir(parents=True)
-        print(f"Logging directory created at {test_Path.absolute()}")
+        try:
+            test_Path.mkdir(parents=True)
+            print(f"Directory created at {test_Path.absolute()}")
+        except Exception as e:
+            print(f'an error has occured when verifying the file structure: {e}')
+            sys.exit(1)
 
 
 path_List = [
@@ -29,21 +34,27 @@ path_List = [
 for p in path_List:
     verify_Path(p)
 
+# --setup logging
 
+# ----format for log file 
 logfile = log_Path / f"{datetime.today().strftime('%M-%S-%H-%d-%m-%Y')}.log"
 
 logger = logging.getLogger(__name__)
 
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
-logger.debug(f'Logging initiated in file {logfile}')
+logger.debug(f'Logging initiated in file {logfile.absolute()}')
 
+logger.debug(f' File System verified.')
 
-
+# --setup database
+# ----set file name
 db_File: Path = entityHome / "DataBase" / f"{entityName}.db"
-
-# create connection to database
-sqlite3.connect(db_File)
+# ----create connection to database
+try:
+    db = sqlite3.connect(db_File)
+except Exception as e:
+    logger.error(f'an error occured when connecting to database: {e}')
 
 # yesterday sorted by day/month/year for sorting most recent
 yesterday = (datetime.today() - timedelta(days=1)).strftime('%d-%m-%Y')
