@@ -85,7 +85,7 @@ try:
             )
     )
     logger.debug('Data Cleaned Successfuly')
-except Exception as {e}:
+except Exception as e:
     logger.error(f'error when cleaning data with method chain: {e}')
 
 #write the data to the database
