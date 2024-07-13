@@ -86,7 +86,7 @@ try:
                 by = 'Incident_Time'
             )
     )
-    logger.debug('Data Cleaned Successfuly')ddf
+    logger.debug('Data Cleaned Successfuly')
 except Exception as e:
     logger.error(f'error when cleaning data with method chain: {e}')
 
