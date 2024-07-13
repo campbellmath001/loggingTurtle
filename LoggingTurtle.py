@@ -74,13 +74,13 @@ try:
     df = (
         raw_data
         .rename(
-            columns = {0:'Datetime', 1:'Incident ID', 2:'Description', 3:'Location', 4:'Disposition'}
+            columns = {0:'Incident_Time', 1:'Incident_ID', 2:'Description', 3:'Location', 4:'Disposition'}
             )
         .assign(
-            Datetime = lambda x: pd.to_datetime(x['Datetime'], format ='%m/%d/%Y %I:%M:%S %p')
+            Time_Stamp = lambda x: pd.to_datetime(x['Incident_Time'], format ='%m/%d/%Y %I:%M:%S %p')
             )
         .sort_values(
-            by = 'Datetime'
+            by = 'Incident_Time'
             )
     )
     logger.debug('Data Cleaned Successfuly')
