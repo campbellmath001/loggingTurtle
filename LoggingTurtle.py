@@ -73,14 +73,17 @@ logger.debug('beginning data cleanup')
 try:
     df = (
         raw_data
-        .rename(
-            columns = {'Date Time':'Incident_Time', 'inci #':'Incident_ID'}
+            .rename(
+                columns = {'Date Time':'Incident_Time', 'inci #':'Incident_ID'}
             )
-        .assign(
-            Incident_Time = lambda x: pd.to_datetime(x['Incident_Time'], format ='%m/%d/%Y %I:%M:%S %p')
+            .assign(
+                Incident_Time = lambda x: pd.to_datetime(x['Incident_Time'], format ='%m/%d/%Y %I:%M:%S %p'),
+                Block=lambda x: x['Address'].str.extract(r'(\d+) Block of (?P<street>.+)')[0],
+                Street=lambda x: x['Address'].str.extract(r'(\d+) Block of (?P<street>.+)')[1],
+                Full_Address=lambda x: x['Block'].astype(str) + ' ' + x['Street'] + ' Fairfield, Ca'
             )
-        .sort_values(
-            by = 'Incident_Time'
+            .sort_values(
+                by = 'Incident_Time'
             )
     )
     logger.debug('Data Cleaned Successfuly')
