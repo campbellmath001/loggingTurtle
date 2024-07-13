@@ -89,6 +89,8 @@ try:
     logger.debug('Data Cleaned Successfuly')
 except Exception as e:
     logger.error(f'error when cleaning data with method chain: {e}')
+    #if the data cleanse fails we should exit with an error
+    sys.exit(1)
 
 #write the data to the database
 # --setup database
@@ -106,7 +108,10 @@ try:
     #this acts as a context handler and will .commit() when succesful
     with db:
         df.to_sql('Data_Log', db, if_exists="append", index=False)
-        logger.debug('Database commit successful')
+        logger.debug('Database commit of clean data successful')
+    with db:
+        raw_data.to_sql('Raw_Data_Log', db, if_exists="append", index=False)
+        logger.debug('Database commit of raw data successful')
 except Exception as e:
     logger.error(f'an error occured when writing to the database: {e}')
 
