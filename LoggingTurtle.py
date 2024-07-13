@@ -13,14 +13,15 @@ url = 'https://eservices.fairfield.ca.gov/PoliceLog/'
 # Get the user home directory
 home_dir = Path.home()
 
-def verify_Path(test_Path):
-    if not test_Path.exists():
+
+def verify_path(test_path):
+    if not test_path.exists():
         # create the directory
         try:
-            test_Path.mkdir(parents=True)
-            print(f"Directory created at {test_Path.absolute()}")
+            test_path.mkdir(parents=True)
+            print(f"Directory created at {test_path.absolute()}")
         except Exception as e:
-            print(f'an error has occured when verifying the file structure: {e}')
+            print(f'an error has occurred when verifying the file structure: {e}')
             sys.exit(1)
 
 
@@ -34,7 +35,7 @@ path_List = [
 
 # verify file system
 for p in path_List:
-    verify_Path(p)
+    verify_path(p)
 
 # --setup logging
 # ----format for log file
@@ -48,7 +49,7 @@ logger.debug(f'Logging initiated in file {logfile.absolute()}')
 
 logger.debug(f' File System verified.')
 
-#pull the website with tables into a dataframe
+# pull the website with tables into a dataframe
 try:
     tables = pd.read_html(url)
     logger.debug(f'Url {url} read successful')
@@ -56,10 +57,10 @@ except Exception as e:
     logger.error(f'Error when fetching the url: {e}')
     sys.exit(1)
 
-#select the correct table for archiving
+# select the correct table for archiving
 try:
     raw_data = tables[1]
-    logger.debug(f'desired table # read succesfully')
+    logger.debug(f'desired table # read successfully')
 except Exception as e:
     logger.error(f'Error when choosing desired table for logging: {e}')
     sys.exit(1)
@@ -70,26 +71,26 @@ logger.debug('beginning data cleanup')
 try:
     df = (
         raw_data
-            .rename(
-                columns = {'Date Time':'Incident_Time', 'inci #':'Incident_ID'}
-            )
-            .assign(
-                Incident_Time = lambda x: pd.to_datetime(x['Incident_Time'], format ='%m/%d/%Y %I:%M:%S %p'),
-                Block=lambda x: x['Address'].str.extract(r'(\d+) Block of (?P<street>.+)')[0],
-                Street=lambda x: x['Address'].str.extract(r'(\d+) Block of (?P<street>.+)')['street'],
-                Full_Address=lambda x: x['Block'].astype(str) + ' ' + x['Street'] + ' Fairfield, Ca'
-            )
-            .sort_values(
-                by = 'Incident_Time'
-            )
+        .rename(
+            columns={'Date Time': 'Incident_Time', 'inci #': 'Incident_ID'}
+        )
+        .assign(
+            Incident_Time=lambda x: pd.to_datetime(x['Incident_Time'], format='%m/%d/%Y %I:%M:%S %p'),
+            Block=lambda x: x['Address'].str.extract(r'(\d+) Block of (?P<street>.+)')[0],
+            Street=lambda x: x['Address'].str.extract(r'(\d+) Block of (?P<street>.+)')['street'],
+            Full_Address=lambda x: x['Block'].astype(str) + ' ' + x['Street'] + ' Fairfield, Ca'
+        )
+        .sort_values(
+            by='Incident_Time'
+        )
     )
-    logger.debug('Data Cleaned Successfuly')
+    logger.debug('Data Cleaned Successfully')
 except Exception as e:
     logger.error(f'error when cleaning data with method chain: {e}')
-    #if the data cleanse fails we should exit with an error
+    # if the data cleanse fails we should exit with an error
     sys.exit(1)
 
-#write the data to the database
+# write the data to the database
 # --setup database
 # ----set file name
 db_File = entityHome / "DataBase" / f"{entityName}.db"
@@ -98,11 +99,11 @@ try:
     db = sqlite3.connect(db_File)
     logger.debug(f'Database connected at {db_File.absolute()}')
 except Exception as e:
-    logger.error(f'an error occured when connecting to database: {e}')
+    logger.error(f'an error occurred when connecting to database: {e}')
 
 # --write to database
 try:
-    #this acts as a context handler and will .commit() when succesful
+    # this acts as a context handler and will .commit() when successful
     with db:
         df.to_sql('Data_Log', db, if_exists="append", index=False)
         logger.debug('Database commit of clean data successful')
@@ -110,15 +111,14 @@ try:
         raw_data.to_sql('Raw_Data_Log', db, if_exists="append", index=False)
         logger.debug('Database commit of raw data successful')
 except Exception as e:
-    logger.error(f'an error occured when writing to the database: {e}')
+    logger.error(f'an error occurred when writing to the database: {e}')
 
 # --close the database
 try:
     db.close()
     logger.debug('Database Closed')
 except Exception as e:
-    logger.error(f'An error occured when closing the database: {e}')
-
+    logger.error(f'An error occurred when closing the database: {e}')
 
 # Define yesterday string for file naming
 # day,month,year used to place most recent log at top
@@ -130,9 +130,9 @@ csv_File = csv_Path / f"{yesterday}_{entityName}.csv"
 # write the csv file
 try:
     df.to_csv(csv_File, index=False)
-    logger.debug('csv file successfuly written')
+    logger.debug('csv file successfully written')
 except Exception as e:
-    logger.error(f'An error occured when writing csv file: {e}')
+    logger.error(f'An error occurred when writing csv file: {e}')
 
 # where to write html file and format of filename
 html_File = html_Path / f"{yesterday}_{entityName}.html"
@@ -140,6 +140,6 @@ html_File = html_Path / f"{yesterday}_{entityName}.html"
 # write the html fle
 try:
     df.to_html(html_File, index=False)
-    logger.debug('html file successfuly written')
+    logger.debug('html file successfully written')
 except Exception as e:
-    logger.error(f'An error occured when wirting the html file:{e}')
+    logger.error(f'An error occurred when writing the html file:{e}')
