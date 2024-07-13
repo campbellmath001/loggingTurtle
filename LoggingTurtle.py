@@ -74,7 +74,7 @@ try:
     df = (
         raw_data
         .rename(
-            columns = {0:'Incident_Time', 1:'Incident_ID', 2:'Description', 3:'Location', 4:'Disposition'}
+            columns = {'Date Time':'Incident_Time', 'inci #':'Incident_ID'}
             )
         .assign(
             Incident_Time = lambda x: pd.to_datetime(x['Incident_Time'], format ='%m/%d/%Y %I:%M:%S %p')
