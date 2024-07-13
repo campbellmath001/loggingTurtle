@@ -79,14 +79,14 @@ try:
             .assign(
                 Incident_Time = lambda x: pd.to_datetime(x['Incident_Time'], format ='%m/%d/%Y %I:%M:%S %p'),
                 Block=lambda x: x['Address'].str.extract(r'(\d+) Block of (?P<street>.+)')[0],
-                Street=lambda x: x['Address'].str.extract(r'(\d+) Block of (?P<street>.+)')[1],
+                Street=lambda x: x['Address'].str.extract(r'(\d+) Block of (?P<street>.+)')['street'],
                 Full_Address=lambda x: x['Block'].astype(str) + ' ' + x['Street'] + ' Fairfield, Ca'
             )
             .sort_values(
                 by = 'Incident_Time'
             )
     )
-    logger.debug('Data Cleaned Successfuly')
+    logger.debug('Data Cleaned Successfuly')ddf
 except Exception as e:
     logger.error(f'error when cleaning data with method chain: {e}')
 
