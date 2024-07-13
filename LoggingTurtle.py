@@ -13,7 +13,6 @@ current_dir = Path.cwd()
 home_dir = Path.home()
 
 def verify_Path(test_Path):
-    
     if not test_Path.exists():
         # create the directory
         try:
@@ -38,7 +37,7 @@ for p in path_List:
 
 # --setup logging
 
-# ----format for log file 
+# ----format for log file
 logfile = log_Path / f"{datetime.today().strftime('%M-%S-%H-%d-%m-%Y')}.log"
 
 logger = logging.getLogger(__name__)
@@ -138,4 +137,3 @@ try:
     df.to_html(html_file, index=False)
 except Exception as e:
     logger.error(f'An error occured when wirting the html file:{e}')
-
