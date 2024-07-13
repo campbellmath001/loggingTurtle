@@ -134,6 +134,6 @@ html_File = html_Path / f"{yesterday}_{entityName}.html"
 
 # write the html fle
 try:
-    df.to_html(html_file, index=False)
+    df.to_html(html_File, index=False)
 except Exception as e:
     logger.error(f'An error occured when wirting the html file:{e}')
