@@ -5,11 +5,12 @@ import sqlite3
 import pandas as pd
 import sys
 
-# entityName is used to name the directories and database where the logged information is stored
+# entityName is used to name the directories and files where the logged information is stored
 entityName = "FFPD"
+# url for collecting data
+url = 'https://eservices.fairfield.ca.gov/PoliceLog/'
 
-# Get the current working directory
-current_dir = Path.cwd()
+# Get the user home directory
 home_dir = Path.home()
 
 def verify_Path(test_Path):
@@ -24,7 +25,7 @@ def verify_Path(test_Path):
 
 
 path_List = [
-    entityHome := (current_dir / f"{entityName}"),
+    entityHome := (home_dir / "loggingTurtle" / entityName),
     log_Path := (entityHome / "Debug_Logs"),
     db_Path := (entityHome / "DataBase"),
     csv_Path := (entityHome / "csv"),
@@ -36,7 +37,6 @@ for p in path_List:
     verify_Path(p)
 
 # --setup logging
-
 # ----format for log file
 logfile = log_Path / f"{datetime.today().strftime('%M-%S-%H-%d-%m-%Y')}.log"
 
@@ -47,9 +47,6 @@ logging.basicConfig(filename=logfile, level=logging.DEBUG)
 logger.debug(f'Logging initiated in file {logfile.absolute()}')
 
 logger.debug(f' File System verified.')
-
-#Set url for collecting data
-url = 'https://eservices.fairfield.ca.gov/PoliceLog/'
 
 #pull the website with tables into a dataframe
 try:
