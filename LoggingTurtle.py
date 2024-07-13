@@ -49,7 +49,7 @@ logger.debug(f'Logging initiated in file {logfile.absolute()}')
 logger.debug(f' File System verified.')
 
 #Set url for collecting data
-url = 'http://'
+url = 'https://eservices.fairfield.ca.gov/PoliceLog/'
 
 #pull the website with tables into a dataframe
 try:
@@ -135,5 +135,6 @@ html_File = html_Path / f"{yesterday}_{entityName}.html"
 # write the html fle
 try:
     df.to_html(html_File, index=False)
+    logger.debug('html file successfuly written')
 except Exception as e:
     logger.error(f'An error occured when wirting the html file:{e}')
