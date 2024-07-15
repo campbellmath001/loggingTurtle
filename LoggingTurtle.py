@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from pathlib import Path
 import logging
-import adbc_driver.sqlite.dbapi
+import adbc_driver_sqlite.dbapi
 import pandas as pd
 import sys
 
