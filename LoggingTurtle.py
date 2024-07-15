@@ -107,7 +107,7 @@ try:
     with db:
         df.to_sql('Data_Log', db, if_exists="append", index=False)
         logger.debug('Database commit of clean data successful')
-    with db:
+#   with db (check to see if this fixes error)
         raw_data.to_sql('Raw_Data_Log', db, if_exists="append", index=False)
         logger.debug('Database commit of raw data successful')
 except Exception as e:
