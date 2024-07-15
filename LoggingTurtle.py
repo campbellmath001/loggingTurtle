@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from pathlib import Path
 import logging
-import sqlite3
+import adbc_driver.sqlite.dbapi
 import pandas as pd
 import sys
 
@@ -96,7 +96,7 @@ except Exception as e:
 db_File = entityHome / "DataBase" / f"{entityName}.db"
 # ----create connection to database
 try:
-    db = sqlite3.connect(db_File)
+    db = adbc_driver.sqlite.dbapi.connect(db_File)
     logger.debug(f'Database connected at {db_File.absolute()}')
 except Exception as e:
     logger.error(f'an error occurred when connecting to database: {e}')
