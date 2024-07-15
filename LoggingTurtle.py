@@ -19,7 +19,7 @@ def verify_path(test_path):
         # create the directory
         try:
             test_path.mkdir(parents=True)
-            print(f"Directory created at {test_path.absolute()}")
+            print(f"Directory created at {test_path.resolve()}")
         except Exception as e:
             print(f'an error has occurred when verifying the file structure: {e}')
             sys.exit(1)
@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
-logger.debug(f'Logging initiated in file {logfile.absolute()}')
+logger.debug(f'Logging initiated in file {logfile.resolve()}')
 
 logger.debug(f' File System verified.')
 
@@ -96,8 +96,8 @@ except Exception as e:
 db_File = entityHome / "DataBase" / f"{entityName}.db"
 # ----create connection to database
 try:
-    db = adbc_driver_sqlite.dbapi.connect(db_File.absolute())
-    logger.debug(f'Database connected at {db_File.absolute()}')
+    db = adbc_driver_sqlite.dbapi.connect(str(db_File.resolve()))
+    logger.debug(f'Database connected at {db_File.resolve()}')
 except Exception as e:
     logger.error(f'an error occurred when connecting to database: {e}')
 
