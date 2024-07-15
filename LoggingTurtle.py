@@ -96,7 +96,7 @@ except Exception as e:
 db_File = entityHome / "DataBase" / f"{entityName}.db"
 # ----create connection to database
 try:
-    db = adbc_driver_sqlite.dbapi.connect(db_File)
+    db = adbc_driver_sqlite.dbapi.connect(db_File.absolute())
     logger.debug(f'Database connected at {db_File.absolute()}')
 except Exception as e:
     logger.error(f'an error occurred when connecting to database: {e}')
