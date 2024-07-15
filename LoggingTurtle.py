@@ -105,9 +105,10 @@ except Exception as e:
 try:
     # this acts as a context handler and will .commit() when successful
     with db:
+        # write clean data to Data_Log table
         df.to_sql('Data_Log', db, if_exists="append", index=False)
         logger.debug('Database commit of clean data successful')
-#   with db (check to see if this fixes error)
+        # write raw data to Raw_Data_Log table
         raw_data.to_sql('Raw_Data_Log', db, if_exists="append", index=False)
         logger.debug('Database commit of raw data successful')
 except Exception as e:
