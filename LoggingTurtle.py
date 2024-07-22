@@ -4,11 +4,36 @@ import logging
 import adbc_driver_sqlite.dbapi
 import pandas as pd
 import sys
+import argparse
 
+# -- parse command line arguments
+parser = argparse.ArgumentParser()
+
+parser.add_argument("name", type=str, 
+    help="Name of the entity to log")
+
+parser.add_argument("-d", "--debug", action="store_true",
+    help="run in a clean test environment ..entityName/Debug/")
+
+# ---- store the command line arguments in args
+args = parser.parse_args()
+
+# This is intended to be an external config file eventually
+# store all possible logging entities
+entityDict = {
+    'FFPD': {
+        #name of directory and database etc determined by entityName
+        'entityName' : 'FFPD', 
+        'url' : 'https://eservices.fairfield.ca.gov/PoliceLog/'
+    }
+}
+
+# -- Begin setup of file system
 # entityName is used to name the directories and files where the logged information is stored
-entityName = "FFPD"
+entityName = entityDict[args.name]['entityName']
+
 # url for collecting data
-url = 'https://eservices.fairfield.ca.gov/PoliceLog/'
+url = entityDict[args.name]['url']
 
 # Get the user home directory
 home_dir = Path.home()
@@ -25,13 +50,25 @@ def verify_path(test_path):
             sys.exit(1)
 
 
-path_List = [
-    entityHome := (home_dir / "loggingTurtle" / entityName),
-    log_Path := (entityHome / "Debug_Logs"),
-    db_Path := (entityHome / "DataBase"),
-    csv_Path := (entityHome / "csv"),
-    html_Path := (home_dir / "public_html" / entityName)
-]
+# Check if in debug mode and create a debug environment if needed
+if not args.debug:
+    path_List = [
+        entityHome := (home_dir / "loggingTurtle" / entityName),
+        log_Path := (entityHome / "Debug_Logs"),
+        db_Path := (entityHome / "DataBase"),
+        csv_Path := (entityHome / "csv"),
+        html_Path := (home_dir / "public_html" / entityName)
+    ]
+else:
+    path_List = [
+        entityHome := (home_dir / "loggingTurtle" / entityName / "Debug"),
+        log_Path := (entityHome / "Debug_Logs"),
+        db_Path := (entityHome / "DataBase"),
+        csv_Path := (entityHome / "csv"),
+        # html written to the debug folder
+        html_Path := (entityHome / "public_html" / entityName)
+    ]
+
 
 # verify file system
 for p in path_List:
