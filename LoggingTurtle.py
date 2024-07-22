@@ -23,14 +23,14 @@ args = parser.parse_args()
 entityDict = {
     'FFPD': {
         #name of directory and database etc determined by entityName
-        'entityName' : 'FFPD', 
+        'entityName' : 'FFPD',
         'url' : 'https://eservices.fairfield.ca.gov/PoliceLog/'
     }
 }
 
 # check that name is a valid entity
 if args.name not in entityDict:
-    print(f"{name} not in entitydict")
+    print(f"{args.name} not in entitydict")
     # prompt for a url and not exit?
     sys.exit(1)
 
