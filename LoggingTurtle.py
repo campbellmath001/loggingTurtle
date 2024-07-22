@@ -28,6 +28,12 @@ entityDict = {
     }
 }
 
+# check that name is a valid entity
+if args.name not in entityDict:
+    print(f"{name} not in entitydict")
+    # prompt for a url and not exit?
+    sys.exit(1)
+
 # -- Begin setup of file system
 # entityName is used to name the directories and files where the logged information is stored
 entityName = entityDict[args.name]['entityName']
