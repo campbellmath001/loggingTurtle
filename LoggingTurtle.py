@@ -52,28 +52,24 @@ def verify_path(test_path):
             print(f'an error has occurred when verifying the file structure: {e}')
             sys.exit(1)
 
+# Define the directories where the data will be placed
+entityHome = (home_dir / "loggingTurtle" / entityName)
+html_Path = (home_dir / "public_html" / entityName)
 
 # Check if in debug mode and create a debug environment if needed
-if not args.debug:
-    path_List = [
-        entityHome := (home_dir / "loggingTurtle" / entityName),
-        log_Path := (entityHome / "Debug_Logs"),
-        db_Path := (entityHome / "DataBase"),
-        csv_Path := (entityHome / "csv"),
-        html_Path := (home_dir / "public_html" / entityName)
-    ]
-else:
-    path_List = [
-        entityHome := (home_dir / "loggingTurtle" / entityName / "Debug"),
-        log_Path := (entityHome / "Debug_Logs"),
-        db_Path := (entityHome / "DataBase"),
-        csv_Path := (entityHome / "csv"),
-        # html written to the debug folder
-        html_Path := (entityHome / "public_html" / entityName)
-    ]
-
+if args.debug:
+    entityHome = entityHome / "Debug"
+    html_Path = html_Path / "Debug"
 
 # verify file system
+path_List = [
+    entityHome,
+    log_Path := (entityHome / "Debug_Logs"),
+    db_Path := (entityHome / "DataBase"),
+    csv_Path := (entityHome / "csv"),
+    html_Path
+]
+
 for p in path_List:
     verify_path(p)
 
