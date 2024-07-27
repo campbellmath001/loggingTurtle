@@ -1,0 +1,12 @@
+[FFPD]
+name = "FFPD"
+url = "https://eservices.fairfield.ca.gov/PoliceLog/"
+last_access = 2024-07-01
+n_records_changed = 0
+
+[FFFD]
+name = "FFFD"
+url = "https://eservices.fairfield.ca.gov/FireLog/"
+last_access = 2024-07-23
+n_records_changed = 0
+

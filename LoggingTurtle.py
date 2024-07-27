@@ -5,6 +5,8 @@ import adbc_driver_sqlite.dbapi
 import pandas as pd
 import sys
 import argparse
+from tomlkit import dump, load
+from tomlkit import datetime as tk_datetime
 
 # -- parse command line arguments
 parser = argparse.ArgumentParser()
@@ -18,15 +20,10 @@ parser.add_argument("-d", "--debug", action="store_true",
 # ---- store the command line arguments in args
 args = parser.parse_args()
 
-# This is intended to be an external config file eventually
-# store all possible logging entities
-entityDict = {
-    'FFPD': {
-        #name of directory and database etc determined by entityName
-        'entityName' : 'FFPD',
-        'url' : 'https://eservices.fairfield.ca.gov/PoliceLog/'
-    }
-}
+# load turtles.toml using tomlkit
+# tomlkit represents the file as a tomldocument class which acts like a dict
+with open('turtles.toml') as f:
+    entityDict = load(f)
 
 # check that name is a valid entity
 if args.name not in entityDict:
@@ -36,7 +33,7 @@ if args.name not in entityDict:
 
 # -- Begin setup of file system
 # entityName is used to name the directories and files where the logged information is stored
-entityName = entityDict[args.name]['entityName']
+entityName = entityDict[args.name]['name']
 
 # url for collecting data
 url = entityDict[args.name]['url']
