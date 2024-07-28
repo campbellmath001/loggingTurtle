@@ -12,11 +12,10 @@ from tomlkit import datetime as tk_datetime
 # -- parse command line arguments
 parser = argparse.ArgumentParser()
 
-parser.add_argument("name", type=str, 
-    help="Name of the entity to log")
+parser.add_argument("name", type=str, help="Name of the entity to log")
 
-parser.add_argument("-d", "--debug", action="store_true",
-    help="run in a clean test environment ..entityName/Debug/")
+parser.add_argument("-d", "--debug",
+    action="store_true", help="run in a clean test environment ..entityName/Debug/")
 
 # ---- store the command line arguments in args
 args = parser.parse_args()
@@ -109,16 +108,28 @@ try:
     df = (
         raw_data
         .rename(
-            columns={'Date Time': 'Incident_Time', 'inci #': 'Incident_ID'}
+            columns = {'Date Time': 'Incident_Time', 'inci #': 'Incident_ID'}
         )
         .assign(
-            Incident_Time=lambda x: pd.to_datetime(x['Incident_Time'], format='%m/%d/%Y %I:%M:%S %p'),
-            Block=lambda x: x['Address'].str.extract(r'(?P<block>\d+) Block of (?P<street>.+)')['block'],
-            Street=lambda x: x['Address'].str.extract(r'(?P<block>\d+) Block of (?P<street>.+)')['street'],
-            Full_Address=lambda x: x['Block'].astype(str) + ' ' + x['Street'] + ' Fairfield, Ca'
+            Incident_Time = (
+                lambda x:
+                    pd.to_datetime(x['Incident_Time'], format='%m/%d/%Y %I:%M:%S %p')
+            ),
+            Block = (
+                lambda x:
+                    x['Address'].str.split(' Block of ', expand = True)[0]
+            ),
+            Street = (
+                lambda x:
+                    x['Address'].str.split(' Block of ', expand = True)[1]
+            ),
+            Full_Address = (
+                lambda x:
+                    x['Block'] + ' ' + x['Street'] + ' Fairfield, Ca'
+            )
         )
         .sort_values(
-            by='Incident_Time'
+            by = 'Incident_Time'
         )
     )
     logger.debug('Data Cleaned Successfully')
