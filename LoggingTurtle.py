@@ -20,9 +20,15 @@ parser.add_argument("-d", "--debug",
 # ---- store the command line arguments in args
 args = parser.parse_args()
 
+# Get the user home directory
+home_dir = Path.home()
+
+# running fom crontab requires we specify an absolute path to the config file
+toml_path = home_dir / 'loggingTurtle'
+
 # load turtles.toml using tomlkit
 # tomlkit represents the file as a tomldocument class which acts like a dict
-with open('turtles.toml', encoding="utf-8") as f:
+with open(toml_path / 'turtles.toml', encoding="utf-8") as f:
     entityDict = load(f)
 
 # check that name is a valid entity
@@ -38,10 +44,7 @@ entityName = entityDict[args.name]['name']
 # url for collecting data
 url = entityDict[args.name]['url']
 
-# Get the user home directory
-home_dir = Path.home()
-
-
+# ensure file structure is in place
 def verify_path(test_path):
     if not test_path.exists():
         # create the directory
