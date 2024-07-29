@@ -1,3 +1,20 @@
+""" 
+command line tool for logging tables of police and fire dispatch events
+
+This program is intended to be run from crontab.  
+
+usage:
+python3 LoggingTurtle.py Entity_Name
+
+Entity_Name refers to a [table] in turtles.toml file.
+
+The program is intened to capture a table each day, format the table
+
+and then store the table as a csv and html file.  The new entries are
+
+then written to a sqlite3 database in loggingTurtle/enityName/DataBase/
+
+"""
 from datetime import datetime, timedelta
 from pathlib import Path
 import sys
@@ -12,7 +29,8 @@ from tomlkit import datetime as tk_datetime
 # -- parse command line arguments
 parser = argparse.ArgumentParser()
 
-parser.add_argument("name", type=str, help="Name of the entity to log")
+parser.add_argument("name",
+    type=str, help="Name of the entity to log. Must be a table in turtles.toml")
 
 parser.add_argument("-d", "--debug",
     action="store_true", help="run in a clean test environment ..entityName/Debug/")
@@ -46,6 +64,7 @@ url = entityDict[args.name]['url']
 
 # ensure file structure is in place
 def verify_path(test_path):
+    """make sure directories for writing files exist and create them if not"""
     if not test_path.exists():
         # create the directory
         try:
