@@ -6,7 +6,7 @@ import logging
 
 import adbc_driver_sqlite.dbapi
 import pandas as pd
-from tomlkit import dump, load
+from tomlkit import dump, load, integer
 from tomlkit import datetime as tk_datetime
 
 # -- parse command line arguments
@@ -28,8 +28,8 @@ toml_path = home_dir / 'loggingTurtle'
 
 # load turtles.toml using tomlkit
 # tomlkit represents the file as a tomldocument class which acts like a dict
-with open(toml_path / 'turtles.toml', encoding="utf-8") as f:
-    entityDict = load(f)
+with open(toml_path / 'turtles.toml', encoding="utf-8") as fp:
+    entityDict = load(fp)
 
 # check that name is a valid entity
 if args.name not in entityDict:
@@ -153,11 +153,12 @@ except Exception as e:
     logger.error('an error occurred when connecting to database: %s', e)
 
 # --write to database
+N_UPDATES = 0
 try:
     # this acts as a context handler and will .commit() when successful
     with db:
         # write clean data to Data_Log table
-        df.to_sql('Data_Log', db, if_exists="append", index=False)
+        N_UPDATES = df.to_sql('Data_Log', db, if_exists="append", index=False)
         logger.debug('Database commit of clean data successful')
         # write raw data to Raw_Data_Log table
         raw_data.to_sql('Raw_Data_Log', db, if_exists="append", index=False)
@@ -195,3 +196,10 @@ try:
     logger.debug('html file successfully written')
 except Exception as e:
     logger.error('An error occurred when writing the html file: %s', e)
+
+# update toml config file
+entityDict[args.name]['last_access'] = tk_datetime(datetime.today().isoformat(timespec='seconds'))
+entityDict[args.name]['n_records_changed'] = integer(N_UPDATES)
+
+with open(toml_path / 'turtles.toml', "w", encoding ="utf-8") as fp:
+    dump(entityDict, fp)
