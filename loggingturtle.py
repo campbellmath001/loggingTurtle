@@ -112,7 +112,7 @@ try:
     tables = pd.read_html(url, dtype_backend="pyarrow")
     logger.debug('Url %s read successful', url)
 except Exception as e:
-    logger.error('Error when fetching the url: %s', e)
+    logger.exception('Error when fetching the url')
     sys.exit(1)
 
 # select the correct table for archiving
@@ -120,7 +120,7 @@ try:
     raw_data = tables[1]
     logger.debug('desired table # read successfully')
 except Exception as e:
-    logger.error('Error when choosing desired table for logging: %s', e)
+    logger.exception('Error when choosing desired table for logging:')
     sys.exit(1)
 
 # clean up the data with a custom method chain for your data
@@ -156,7 +156,7 @@ try:
     )
     logger.debug('Data Cleaned Successfully')
 except Exception as e:
-    logger.error('error when cleaning data with method chain: %s', e)
+    logger.exception('error when cleaning data with method chain:')
     # if the data cleanse fails we should exit with an error
     sys.exit(1)
 
@@ -169,7 +169,7 @@ try:
     db = adbc_driver_sqlite.dbapi.connect(str(db_File.resolve()))
     logger.debug('Database connected at %s', str(db_File.resolve()))
 except Exception as e:
-    logger.error('an error occurred when connecting to database: %s', e)
+    logger.exception('an error occurred when connecting to database:')
 
 # --write to database
 N_UPDATES = 0
@@ -183,14 +183,14 @@ try:
         raw_data.to_sql('Raw_Data_Log', db, if_exists="append", index=False)
         logger.debug('Database commit of raw data successful')
 except Exception as e:
-    logger.error('an error occurred when writing to the database: %s', e)
+    logger.exception('an error occurred when writing to the database:')
 
 # --close the database
 try:
     db.close()
     logger.debug('Database Closed')
 except Exception as e:
-    logger.error('An error occurred when closing the database: %s', e)
+    logger.exception('An error occurred when closing the database:')
 
 # Define yesterday string for file naming
 # day,month,year used to place most recent log at top
@@ -204,7 +204,7 @@ try:
     df.to_csv(csv_File, index=False)
     logger.debug('csv file successfully written')
 except Exception as e:
-    logger.error('An error occurred when writing csv file: %s', e)
+    logger.exception('An error occurred when writing csv file:')
 
 # where to write html file and format of filename
 html_File = html_Path / f"{yesterday}_{entityName}.html"
@@ -214,7 +214,7 @@ try:
     df.to_html(html_File, index=False)
     logger.debug('html file successfully written')
 except Exception as e:
-    logger.error('An error occurred when writing the html file: %s', e)
+    logger.exception('An error occurred when writing the html file:')
 
 # update toml config file
 entityDict[args.name]['last_access'] = tk_datetime(datetime.today().isoformat(timespec='seconds'))
