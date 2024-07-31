@@ -30,7 +30,7 @@ from tomlkit import datetime as tk_datetime
 parser = argparse.ArgumentParser()
 
 parser.add_argument("name",
-    type=str, help="Name of the entity to log. Must be a table in turtles.toml")
+    type=str, help="Name of the entity to log. Must be a name of a table in turtles.toml")
 
 parser.add_argument("-d", "--debug",
     action="store_true", help="run in a clean test environment ..entityName/Debug/")
@@ -38,7 +38,7 @@ parser.add_argument("-d", "--debug",
 # ---- store the command line arguments in args
 args = parser.parse_args()
 
-# Get the user home directory
+#By default logs are placed in ~/loggingTurtle/entityname
 home_dir = Path.home()
 
 # running fom crontab requires we specify an absolute path to the config file
@@ -46,13 +46,16 @@ toml_path = home_dir / 'loggingTurtle'
 
 # load turtles.toml using tomlkit
 # tomlkit represents the file as a tomldocument class which acts like a dict
-with open(toml_path / 'turtles.toml', encoding="utf-8") as fp:
-    entityDict = load(fp)
+try:
+    with open(toml_path / 'turtles.toml', encoding="utf-8") as fp:
+        entityDict = load(fp)
+except Exception as e:
+    print(f"Unable to load turtles.toml \n Execption reported {e}")
+    sys.exit(1)
 
 # check that name is a valid entity
 if args.name not in entityDict:
-    print(f"{args.name} not in entitydict")
-    # prompt for a url and not exit?
+    print(f"[{args.name}] is not the name of a table in turtles.toml")
     sys.exit(1)
 
 # -- Begin setup of file system
@@ -161,8 +164,7 @@ except Exception as e:
     sys.exit(1)
 
 # write the data to the database
-# --setup database
-# ----set file name
+
 db_File = entityHome / "DataBase" / f"{entityName}.db"
 # ----create connection to database
 try:
@@ -220,5 +222,10 @@ except Exception as e:
 entityDict[args.name]['last_access'] = tk_datetime(datetime.today().isoformat(timespec='seconds'))
 entityDict[args.name]['n_records_changed'] = integer(N_UPDATES)
 
-with open(toml_path / 'turtles.toml', "w", encoding ="utf-8") as fp:
-    dump(entityDict, fp)
+try:
+    with open(toml_path / 'turtles.toml', "w", encoding ="utf-8") as fp:
+        dump(entityDict, fp)
+except Exception as e:
+    logger.exception('An error occured when writing the toml file')
+
+print(f"{args.name} logging for {datetime.today().isoformat(timespec='seconds')} finished with {N_UPDATES} changes made to database.")
