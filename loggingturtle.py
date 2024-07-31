@@ -219,7 +219,9 @@ except Exception as e:
     logger.exception('An error occurred when writing the html file:')
 
 # update toml config file
-entityDict[args.name]['last_access'] = tk_datetime(datetime.today().isoformat(timespec='seconds'))
+timestamp = datetime.today().isoformat(timespec='seconds')
+
+entityDict[args.name]['last_access'] = tk_datetime(timestamp)
 entityDict[args.name]['n_records_changed'] = integer(N_UPDATES)
 
 try:
@@ -228,4 +230,4 @@ try:
 except Exception as e:
     logger.exception('An error occured when writing the toml file')
 
-print(f"{args.name} logging for {datetime.today().isoformat(timespec='seconds')} finished with {N_UPDATES} changes made to database.")
+print(f"{args.name} logging for {timestamp} finished with {N_UPDATES} changes made to database.")
